@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/olivere/elastic"
 	"go_test_project/src/basic"
 	"unicode/utf8"
 )
@@ -31,4 +32,6 @@ func main() {
 	fmt.Println()
 	var strShow []rune = []rune(str)
 	fmt.Printf("%c",strShow[1])
+
+    elastic.NewClient()
 }
