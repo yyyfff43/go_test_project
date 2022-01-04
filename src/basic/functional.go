@@ -7,9 +7,9 @@ package basic
 
 //一般函数式变成实现整数值的累加
 func Adder() func(int) int {
-	sum := 0
+	sum := 0//函数内的局部变量
 	return func(v int) int {
-		sum += v
+		sum += v //v是可扩展变量，形成闭包累加
 		return sum
 	}
 }
