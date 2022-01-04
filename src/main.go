@@ -30,6 +30,23 @@ func main() {
 	}
 	fmt.Println()
 	var strShow []rune = []rune(str)
-	fmt.Printf("%c",strShow[1])
+	fmt.Printf("下标为1的元素值为：%c",strShow[1])
 
+	//函数式变成测试，1累计加到10
+    fLearn := basic.Adder()
+    for i:=0; i<=10; i++{
+			var s int
+			s = fLearn(i)
+			fmt.Printf("0 + 1 + ... + %d = %d\n",
+				i, s)
+	}
+
+	fmt.Println("第二种实现方式：")
+	fLearnAdder := basic.Adder2(0)
+	for i := 0; i < 10; i++ {
+		var s int
+		s, fLearnAdder = fLearnAdder(i)
+		fmt.Printf("0 + 1 + ... + %d = %d\n",
+			i, s)
+	}
 }
