@@ -6,6 +6,7 @@ package main
 import (
 	"fmt"
 	"go_test_project/src/basic"
+	"go_test_project/src/err_test"
 	"unicode/utf8"
 )
 
@@ -49,4 +50,9 @@ func main() {
 		fmt.Printf("0 + 1 + ... + %d = %d\n",
 			i, s)
 	}
+
+	fmt.Println("")
+	fmt.Println("测试go的err处理:")
+	//defer,panic,recover的用法
+	err_test.TryRecover()
 }
