@@ -54,3 +54,7 @@ func BenchmarkAddSomeThing(b *testing.B) {
 		}
 	}
 }
+
+//go test -bench . -cpuprofile=cpu.out
+//go tool pprof cpu.out (图里框框越大，花的时间越久)
+//执行web命令查看svg图，quit退出，之前需要安装graphviz插件，地址：http://www.graphviz.org/download/
