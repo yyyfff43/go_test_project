@@ -1,4 +1,4 @@
-package err_test
+package err_learn
 
 import (
 	"fmt"

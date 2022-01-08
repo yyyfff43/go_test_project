@@ -6,7 +6,7 @@ package main
 import (
 	"fmt"
 	"go_test_project/src/basic"
-	"go_test_project/src/err_test"
+	"go_test_project/src/err_learn"
 	"unicode/utf8"
 )
 
@@ -54,5 +54,5 @@ func main() {
 	fmt.Println("")
 	fmt.Println("测试go的err处理:")
 	//defer,panic,recover的用法
-	err_test.TryRecover()
+	err_learn.TryRecover()
 }
