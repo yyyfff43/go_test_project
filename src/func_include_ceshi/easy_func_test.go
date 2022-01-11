@@ -1,3 +1,4 @@
+
 package func_include_ceshi
 
 import "testing"
