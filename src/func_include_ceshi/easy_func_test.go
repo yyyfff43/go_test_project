@@ -1,7 +1,10 @@
 
 package func_include_ceshi
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 //一般单元测试方法
 func TestAddSomeThing(t *testing.T) {
@@ -56,6 +59,21 @@ func BenchmarkAddSomeThing(b *testing.B) {
 	}
 }
 
+func ExampleAddSomeThing() {
+    res := AddSomeThing(1,2)
+    fmt.Println(res)
+	//Output:
+	//5
+}
+
 //go test -bench . -cpuprofile=cpu.out
 //go tool pprof cpu.out (图里框框越大，花的时间越久)
 //执行web命令查看svg图，quit退出，之前需要安装graphviz插件，地址：http://www.graphviz.org/download/
+
+
+//go doc 通过命令行查看文档介绍和注释
+//godoc命令比如执行godoc -http://localhost:6060 可用网页查看注释
+
+//使用Goanno插件在函数上方生成注释模板
+
+//Example来执行函数的示例,如果不和期望结果相等，这个用例不会通过

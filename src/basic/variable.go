@@ -28,6 +28,11 @@ func RangeStringByRune(str string) {
 	fmt.Println()
 }
 
+//
+//  RangeEachUtf8Ch
+//  @Description: utf8编码的中文字符串遍历
+//  @param str 中文字符串
+//
 func RangeEachUtf8Ch(str string) {
 	bytes := []byte(str)
 	for len(bytes) > 0 {
