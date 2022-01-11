@@ -63,7 +63,7 @@ func ExampleAddSomeThing() {
     res := AddSomeThing(1,2)
     fmt.Println(res)
 	//Output:
-	//5
+	//3
 }
 
 //go test -bench . -cpuprofile=cpu.out
