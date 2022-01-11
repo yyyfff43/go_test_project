@@ -1,4 +1,4 @@
-// Copyright 2021 The Go Authors Yangfan. All rights reserved.
+// Copyright 2021 The Go Authors YangFan. All rights reserved.
 
 /*
 go语言工程项目测试，包含一些基本的变量方法调用和处理

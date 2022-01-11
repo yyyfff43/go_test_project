@@ -1,4 +1,4 @@
-// Copyright 2021 The Go Authors Yangfan. All rights reserved.
+// Copyright 2021 The Go Authors YangFan. All rights reserved.
 
 /*
 go语言工程项目测试，函数式变成学习

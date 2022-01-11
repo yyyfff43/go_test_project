@@ -9,7 +9,7 @@ import (
 //一般单元测试方法
 func TestAddSomeThing(t *testing.T) {
 	var (
-		a,b int = 1,2
+		a,b = 1,2
 		expected = 3
 	)
 
