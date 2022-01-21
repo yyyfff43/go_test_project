@@ -2,7 +2,6 @@ package algorithm
 
 import (
 	"fmt"
-	"github.com/isdamir/gotype"
 )
 
 //链表定义
@@ -11,20 +10,9 @@ type LNode struct {
 	Next *LNode
 }
 
+//节点反转
 func Reverse(node *LNode){
-     if node == nil || node.Next == nil {
-		 return
-	 }
-	 var pre *LNode //定义前驱结点
-     var cur *LNode //定义当前节点
-     next := node.Next
-     for next != nil{
-     	cur = next.Next
-     	next.Next = pre
-     	pre = next
-     	next =pre
-	 }
-	 node.Next = pre
+
 }
 
 //创建链表
