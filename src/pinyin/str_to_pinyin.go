@@ -14,7 +14,7 @@ import (
 )
 
 func ChStr2Pinyin(){
-	hans := "中国人"
+	hans := "解放思想实事求是"
 	a := pinyin.NewArgs()
 	// 默认输出 [[zhong] [guo] [ren]]
 	fmt.Println(pinyin.Pinyin(hans, a))
@@ -28,12 +28,13 @@ func ChStr2Pinyin(){
 	fmt.Println(pinyin.Pinyin(hans, a))
 
 	// 开启多音字模式 [[zhong zhong] [guo] [ren]]
-//	a = NewArgs()
-//	a.Heteronym = true
-//	fmt.Println(pinyin.Pinyin(hans, a))
-//	// [[zho1ng zho4ng] [guo2] [re2n]]
-//	a.Style = pinyin.Tone2
-//	fmt.Println(pinyin.Pinyin(hans, a))
+	a = pinyin.NewArgs()
+	a.Heteronym = true
+	fmt.Println(pinyin.Pinyin(hans, a))
+	// [[zho1ng zho4ng] [guo2] [re2n]]
+	a.Style = pinyin.Tone2
+	fmt.Println(pinyin.Pinyin(hans, a))
+	
 }
 
 
