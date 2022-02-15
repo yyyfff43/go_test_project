@@ -1,6 +1,9 @@
 package basic
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 //
 //  TestRangeEachUtf8Ch
@@ -14,4 +17,10 @@ func TestRangeEachUtf8Ch(t *testing.T) {
 
 	RangeEachUtf8Ch(str)
 
+}
+
+//测试DealForumNum函数
+func TestDealForumNum(t *testing.T) {
+	res := DealForumNum(183386)
+	fmt.Println(res)
 }
