@@ -11,10 +11,11 @@ package pinyin
 import (
 	"fmt"
 	"github.com/mozillazg/go-pinyin"
+	"reflect"
 )
 
 func ChStr2Pinyin(){
-	hans := "解放思想实事求是"
+	hans := "1解放思想and实事求是do"
 	a := pinyin.NewArgs()
 	// 默认输出 [[zhong] [guo] [ren]]
 	fmt.Println(pinyin.Pinyin(hans, a))
@@ -36,5 +37,125 @@ func ChStr2Pinyin(){
 	fmt.Println(pinyin.Pinyin(hans, a))
 	
 }
+
+/*
+* @File : pinyin_multi_util
+* @Describe :中文转拼音工具类，对应java项目中的util包PinyinMultiUtil类
+* @Author: yangfan@zongheng.com
+* @Date : 2022/2/16 10:34
+* @Software: GoLand
+ */
+
+package util
+
+import (
+"fmt"
+"github.com/mozillazg/go-pinyin"
+"reflect"
+"sort"
+"strings"
+)
+
+//
+//  converterToFirstSpell
+//  @Description: 将输入的带多音字的中文词语转化成拼音首字母字符串，有多少个多音字输出多少个组合，
+//  例：输入 雪中悍刀行 输出 xzhdh,xzhdx
+//  @param chines
+//  @return string
+//
+func ConverterToFirstSpell(chines string) string {
+
+	// 开启多音字模式，例：中国人 转 [[zhong zhong] [guo] [ren]]
+	py := pinyin.NewArgs()
+	py.Heteronym = true
+	py.Separator = ""
+	py.Style = pinyin.FirstLetter
+	pySlice := pinyin.Pinyin(chines, py)
+	cpPySlice := CartesianProductSlice(pySlice)
+	sort.Strings(cpPySlice)
+	cpPyDuplicate := SortDuplicate(cpPySlice)
+	newValue := cpPyDuplicate.([]interface{})
+	cpFinal := newValue.([]string)
+	return strings.Join(cpFinal, ",")
+}
+
+func getFirstWordPinyin(str string) []string {
+
+	return nil
+}
+
+func getPinyin(words string) []string {
+	if !StringIsBlank(words) {
+
+	}
+	return nil
+}
+
+//
+//  CartesianProductSlice
+//  @Description: 将传入的二维数组做笛卡尔积运算，返回一个组合的二维数组
+//  @param allStr
+//  @return res
+//
+func CartesianProductSlice(allStr [][]string) (res []string) {
+	var baseSlices [][]string
+	for i := 0; i < len(allStr); i++ {
+		baseSlices = append(baseSlices, allStr[i])
+	}
+	res = baseSlices[0]
+
+	for _, v := range baseSlices[1:] {
+		res = makeData(res, v)
+	}
+
+	return
+}
+
+//
+//  MakeData
+//  @Description: 把新设定的切片连接到老切片上
+//  @param base
+//  @param makeData
+//  @return str
+//
+func makeData(base []string, makeData []string) (str []string) {
+	for _, v := range base {
+		for _, makeDataValue := range makeData {
+			str = append(str, v+makeDataValue)
+		}
+	}
+	return
+}
+
+//
+//  Duplicate
+//  @Description: 将带有重复元素的字符串数组去重返回
+//  @param strSlice
+//  @return []string
+//
+//func Duplicate(strSlice []string) []string {
+//	sort.Strings(strSlice)
+//	SortDuplicate(strSlice)
+//	fmt.Println(strSlice)
+//	return strSlice
+//}
+
+//
+//  SortDuplicate
+//  @Description: 将sort排序后的数组元素去重
+//  @param a
+//  @return ret
+//
+func SortDuplicate(a interface{}) (ret []interface{}) {
+	va := reflect.ValueOf(a)
+	for i := 0; i < va.Len(); i++ {
+		if i > 0 && reflect.DeepEqual(va.Index(i-1).Interface(), va.Index(i).Interface()) {
+			continue
+		}
+		ret = append(ret, va.Index(i).Interface())
+	}
+	return ret
+}
+
 
 
