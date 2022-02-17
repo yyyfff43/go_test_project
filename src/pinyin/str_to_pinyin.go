@@ -14,7 +14,7 @@ import (
 	"reflect"
 )
 
-func ChStr2Pinyin(){
+func ChStr2Pinyin() {
 	hans := "1解放思想and实事求是do"
 	a := pinyin.NewArgs()
 	// 默认输出 [[zhong] [guo] [ren]]
@@ -35,26 +35,8 @@ func ChStr2Pinyin(){
 	// [[zho1ng zho4ng] [guo2] [re2n]]
 	a.Style = pinyin.Tone2
 	fmt.Println(pinyin.Pinyin(hans, a))
-	
+
 }
-
-/*
-* @File : pinyin_multi_util
-* @Describe :中文转拼音工具类，对应java项目中的util包PinyinMultiUtil类
-* @Author: yangfan@zongheng.com
-* @Date : 2022/2/16 10:34
-* @Software: GoLand
- */
-
-package util
-
-import (
-"fmt"
-"github.com/mozillazg/go-pinyin"
-"reflect"
-"sort"
-"strings"
-)
 
 //
 //  converterToFirstSpell
@@ -66,17 +48,18 @@ import (
 func ConverterToFirstSpell(chines string) string {
 
 	// 开启多音字模式，例：中国人 转 [[zhong zhong] [guo] [ren]]
-	py := pinyin.NewArgs()
-	py.Heteronym = true
-	py.Separator = ""
-	py.Style = pinyin.FirstLetter
-	pySlice := pinyin.Pinyin(chines, py)
-	cpPySlice := CartesianProductSlice(pySlice)
-	sort.Strings(cpPySlice)
-	cpPyDuplicate := SortDuplicate(cpPySlice)
-	newValue := cpPyDuplicate.([]interface{})
-	cpFinal := newValue.([]string)
-	return strings.Join(cpFinal, ",")
+	//py := pinyin.NewArgs()
+	//py.Heteronym = true
+	//py.Separator = ""
+	//py.Style = pinyin.FirstLetter
+	//pySlice := pinyin.Pinyin(chines, py)
+	//cpPySlice := CartesianProductSlice(pySlice)
+	//sort.Strings(cpPySlice)
+	//cpPyDuplicate := SortDuplicate(cpPySlice)
+	//newValue := cpPyDuplicate.([]interface{})
+	//cpFinal := newValue.([]string)
+	//return strings.Join(cpFinal, ",")
+	return ""
 }
 
 func getFirstWordPinyin(str string) []string {
@@ -85,7 +68,7 @@ func getFirstWordPinyin(str string) []string {
 }
 
 func getPinyin(words string) []string {
-	if !StringIsBlank(words) {
+	if words != "" {
 
 	}
 	return nil
@@ -156,6 +139,3 @@ func SortDuplicate(a interface{}) (ret []interface{}) {
 	}
 	return ret
 }
-
-
-
