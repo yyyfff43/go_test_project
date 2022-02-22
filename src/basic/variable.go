@@ -8,6 +8,7 @@ package basic
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -65,4 +66,23 @@ func DealForumNum(num int64) string {
 		resStr = resStr + "万"
 	}
 	return resStr
+}
+
+//
+//  Split
+//  @Description: 模拟数组切片的split函数,测试Split函数，因为slice不能比较直接，借助反射包中的方法比较
+//  @param s
+//  @param sep
+//  @return result
+//
+func Split(s, sep string) (result []string) {
+	i := strings.Index(s, sep)
+
+	for i > -1 {
+		result = append(result, s[:i])
+		s = s[i+1:]
+		i = strings.Index(s, sep)
+	}
+	result = append(result, s)
+	return
 }

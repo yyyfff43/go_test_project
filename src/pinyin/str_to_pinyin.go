@@ -37,11 +37,6 @@ func ChStr2Pinyin() {
 	// [[zho1ng zho4ng] [guo2] [re2n]]
 	a.Style = pinyin.Tone2
 	fmt.Println(pinyin.Pinyin(hans, a))
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> ee484e46a452d4472e4e1ab92ec94e2c3c2534ad
 }
 
 //
@@ -53,30 +48,6 @@ func ChStr2Pinyin() {
 //
 func ConverterToFirstSpell(chines string) []string {
 	// 开启多音字模式，例：中国人 转 [[zhong zhong] [guo] [ren]]
-<<<<<<< HEAD
-	//py := pinyin.NewArgs()
-	//py.Heteronym = true
-	//py.Separator = ""
-	//py.Style = pinyin.FirstLetter
-	//pySlice := pinyin.Pinyin(chines, py)
-	//cpPySlice := CartesianProductSlice(pySlice)
-	//sort.Strings(cpPySlice)
-	//cpPyDuplicate := SortDuplicate(cpPySlice)
-	//newValue := cpPyDuplicate.([]interface{})
-	//cpFinal := newValue.([]string)
-	//return strings.Join(cpFinal, ",")
-	return ""
-}
-
-func getFirstWordPinyin(str string) []string {
-
-	return nil
-}
-
-func getPinyin(words string) []string {
-	if words != "" {
-
-=======
 	py := pinyin.NewArgs()
 	py.Heteronym = true
 	py.Separator = ""
@@ -109,7 +80,6 @@ func ConverterToSpell(chines string) []string {
 		sort.Strings(cpPySlice)
 		cpPyDuplicate := SortDuplicate(cpPySlice)
 		return cpPyDuplicate
->>>>>>> ee484e46a452d4472e4e1ab92ec94e2c3c2534ad
 	}
 	return nil
 }
@@ -166,8 +136,6 @@ func SortDuplicate(s []string) (ret []string) {
 	}
 	return s
 }
-<<<<<<< HEAD
-=======
 
 //
 //  GetPinyin
@@ -177,7 +145,7 @@ func SortDuplicate(s []string) (ret []string) {
 //  @return []string
 //
 func GetPinyin(words string) []string {
-	if words!="" {
+	if words != "" {
 		firstPinyin := ConverterToFirstSpell(words)
 		fullPinyin := ConverterToSpell(words)
 		wordsLowC := strings.ToLower(words)
@@ -187,6 +155,3 @@ func GetPinyin(words string) []string {
 	}
 	return nil
 }
-
-
->>>>>>> ee484e46a452d4472e4e1ab92ec94e2c3c2534ad
