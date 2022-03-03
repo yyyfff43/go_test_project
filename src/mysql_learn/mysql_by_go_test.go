@@ -10,6 +10,17 @@ package mysql_learn
 
 import "testing"
 
+//测试单条查询
 func TestQueryRowDemo(t *testing.T) {
 	QueryRowDemo()
+}
+
+//测试预处理查询
+func TestPrepareQueryDemo(t *testing.T) {
+	PrepareQueryDemo()
+}
+
+//测试事务
+func TestTransactionDemo(t *testing.T) {
+	TransactionDemo()
 }
