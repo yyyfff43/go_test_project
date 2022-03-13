@@ -1,6 +1,6 @@
 /*
 * @File : mysql_by_go
-* @Describe : go调用mysql练习
+* @Describe : go调用mysql练习,使用database/sql标准包
 * @Author: Jerry Yang
 * @Date : 2022/3/3 23:22
 * @Software: GoLand
