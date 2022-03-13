@@ -11,16 +11,19 @@ package mysql_learn
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"time"
 
 	"fmt"
 )
 
+var dsn string = "root:123456@tcp(127.0.0.1:3306)/simple_test?charset=utf8mb4&parseTime=True"
+
 type User struct {
-	Id         int
-	Age        int
-	Name       string
-	Gender     int
-	SubmitTime string
+	Id         int    `db:"id"`
+	Age        int    `db:"age"`
+	Name       string `db:"name"`
+	Gender     int    `db:"gender"`
+	SubmitTime string `db:"submitTime"`
 }
 
 //
@@ -36,11 +39,25 @@ func initDb(dsn string) (*sql.DB, error) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	//defer db.Close()
+	//如果需要在一个完整的初始换到关闭的过程中，defer db.close()必须在err判断为空后边调用，否则db对象有
+	//可能报错返回一个db为nil的对象，这时db调用close会报panic
+	//initDb返回出去db对象要在调用函数或包用完时关闭，如果怕忘记获得可使用defer提前定义
+
 	// 尝试与数据库建立连接（校验dsn是否正确）
 	errPing := db.Ping()
 	if err != nil {
 		fmt.Println(errPing.Error())
 	}
+
+	//设置与数据库建立连接的最大数目。 如果n大于0且小于最大闲置连接数，
+	//会将最大闲置连接数减小到匹配最大开启连接数的限制。 如果n<=0，不会限制最大开启连接数，默认为0（无限制）。
+	db.SetMaxOpenConns(100)
+
+	//SetMaxIdleConns设置连接池中的最大闲置连接数。 如果n大于最大开启连接数，
+	//则新的最大闲置连接数会减小到匹配最大开启连接数的限制。 如果n<=0，不会保留闲置连接。
+	db.SetMaxIdleConns(20)
+
 	return db, err
 }
 
@@ -49,7 +66,6 @@ func initDb(dsn string) (*sql.DB, error) {
 //  @Description: 查询单条数据示例
 //
 func QueryRowDemo() {
-	dsn := "root:123456@tcp(127.0.0.1:3306)/simple_test?charset=utf8mb4&parseTime=True"
 	db, _ := initDb(dsn)
 	defer db.Close() //数据库必须要释放连接
 	sqlStr := "select id, name, age from user where id=?"
@@ -61,6 +77,98 @@ func QueryRowDemo() {
 		return
 	}
 	fmt.Printf("id:%d name:%s age:%d\n", u.Id, u.Name, u.Age)
+}
+
+//
+//  queryMultiRowDemo
+//  @Description: 查询多条数据示例
+//
+func QueryMultiRowDemo() {
+	db, _ := initDb(dsn)
+	defer db.Close() //数据库必须要释放连接
+
+	sqlStr := "select id, name, age from user where id > ? order by id desc"
+	rows, err := db.Query(sqlStr, 0)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return
+	}
+	// 非常重要：关闭rows释放持有的数据库链接
+	defer rows.Close()
+
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		var u User
+		err := rows.Scan(&u.Id, &u.Name, &u.Age)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			return
+		}
+		fmt.Printf("id:%d name:%s age:%d\n", u.Id, u.Name, u.Age)
+	}
+}
+
+//
+//  InsertRowDemo
+//  @Description: 插入数据
+//
+func InsertRowDemo() {
+	db, _ := initDb(dsn)
+	defer db.Close() //数据库必须要释放连接
+
+	sqlStr := "insert into user(name, age,gender,submit_time) values (?,?,?,?)"
+	ret, err := db.Exec(sqlStr, "张博智", 31, 2, time.Now())
+	if err != nil {
+		fmt.Printf("insert failed, err:%v\n", err)
+		return
+	}
+	theID, err := ret.LastInsertId() // 新插入数据的id
+	if err != nil {
+		fmt.Printf("get lastinsert ID failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("insert success, the id is %d.\n", theID)
+}
+
+// 更新数据
+func UpdateRowDemo() {
+	db, _ := initDb(dsn)
+	defer db.Close() //数据库必须要释放连接
+
+	sqlStr := "update user set age=? where id = ?"
+	ret, err := db.Exec(sqlStr, 19, 3)
+	if err != nil {
+		fmt.Printf("update failed, err:%v\n", err)
+		return
+	}
+	n, err := ret.RowsAffected() // 操作影响的行数
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("update success, affected rows:%d\n", n)
+}
+
+//
+//  DeleteRowDemo
+//  @Description: 删除数据
+//
+func DeleteRowDemo() {
+	db, _ := initDb(dsn)
+	defer db.Close() //数据库必须要释放连接
+
+	sqlStr := "delete from user where id = ?"
+	ret, err := db.Exec(sqlStr, 7)
+	if err != nil {
+		fmt.Printf("delete failed, err:%v\n", err)
+		return
+	}
+	n, err := ret.RowsAffected() // 操作影响的行数
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("delete success, affected rows:%d\n", n)
 }
 
 //
