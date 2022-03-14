@@ -1,0 +1,2 @@
+[xorm] [info]  2022/03/15 00:09:57.298028 PING DATABASE mysql
+[xorm] [info]  2022/03/15 00:09:57.551037 [SQL] SELECT `id`, `age`, `name`, `gender`, `submit_time` FROM `user` WHERE (name=?) LIMIT 1 []interface {}{"张曼玉"}
