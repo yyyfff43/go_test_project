@@ -18,6 +18,7 @@ import (
 
 var dsn string = "root:123456@tcp(127.0.0.1:3306)/simple_test?charset=utf8mb4&parseTime=True"
 
+//注意此处的标签tag中虽然是db开头，但是后边声明的值如果和数据库相同，xorm也是可以读取的，不必把db：换为xorm:
 type User struct {
 	Id         int    `db:"id"`
 	Age        int    `db:"age"`
