@@ -28,3 +28,8 @@ func TestSimpleGet(t *testing.T) {
 	assert.Nil(t, err)
 	fmt.Println(res)
 }
+
+//测试获取数据库和表的信息
+func TestShowDbInfo(t *testing.T) {
+	ShowDbInfo()
+}

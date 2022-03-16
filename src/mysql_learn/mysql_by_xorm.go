@@ -10,6 +10,7 @@
 package mysql_learn
 
 import (
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
@@ -53,6 +54,12 @@ func InitMySqlXorm(dsn string) *xorm.Engine {
 	return engine
 }
 
+//
+//  SimpleGet
+//  @Description: 简单的get查询
+//  @return *User
+//  @return error
+//
 func SimpleGet() (*User, error) {
 	engine := InitMySqlXorm(dsn)
 	user := new(User)
@@ -67,4 +74,23 @@ func SimpleGet() (*User, error) {
 	} else {
 		return nil, err
 	}
+}
+
+//
+//  ShowDbInfo
+//  @Description: 现实数据库信息和指定表名称的表信息
+//
+func ShowDbInfo() {
+	engine := InitMySqlXorm(dsn)
+	dbInfos, err := engine.DBMetas()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	for _, v := range dbInfos {
+		fmt.Println("表名：" + v.Name + "\n")
+	}
+
+	tablesInfo := engine.TableInfo("user")
+	fmt.Println("表名：" + tablesInfo.Name)
+	fmt.Println("表注释：" + tablesInfo.Comment)
 }
