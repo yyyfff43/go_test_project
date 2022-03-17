@@ -14,7 +14,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
-	"os"
+	"github.com/pkg/errors"
+	"time"
 )
 
 //
@@ -36,24 +37,24 @@ func InitMySqlXorm(dsn string) *xorm.Engine {
 	//如果需要保存日志文件：
 
 	//如果某个文件不存在，那么使用os.Lstat就一定会返回error，只要判断error是否代表文件不存在即可
-	_, errF := os.Lstat("sql.log")
-	var f = new(os.File)
-	var errOs error
-	if !os.IsNotExist(errF) {
-		f, errOs = os.Create("sql.log")
-		if errOs != nil {
-			println(errOs.Error())
-			return nil
-		}
-	} else {
-		f, errOs = os.Open("sql.log")
-		if errOs != nil {
-			println(errOs.Error())
-			return nil
-		}
-	}
+	//_, errF := os.Lstat("sql.log")
+	//var f = new(os.File)
+	//var errOs error
+	//if !os.IsNotExist(errF) {
+	//	f, errOs = os.Create("sql.log")
+	//	if errOs != nil {
+	//		println(errOs.Error())
+	//		return nil
+	//	}
+	//} else {
+	//f, errOs = os.Open("sql.log")
+	//if errOs != nil {
+	//	println(errOs.Error())
+	//	return nil
+	//}
+	//}
 
-	engine.SetLogger(xorm.NewSimpleLogger(f)) //待解决**************每次执行的日志都会被覆盖
+	//	engine.SetLogger(xorm.NewSimpleLogger(f)) // TODO:待解决**************每次执行的日志都会被覆盖
 
 	engine.SetMaxOpenConns(100) //设置最大打开连接数
 	engine.SetMaxIdleConns(20)  //设置连接池的空闲数大小
@@ -109,10 +110,105 @@ func ShowDbInfo() {
 	//根据传入的结构体指针及其对应的Tag，提取出模型对应的表结构信息。这里不是数据库当前的表结构信息，
 	//而是我们通过struct建模时希望数据库的表的结构信息
 	var user = new(User) //此处可以直接使用传统mysql定义的结构体，因为数据库声明tag一致
-	tablesInfo := engine.TableInfo(user)
-	fmt.Println("表名：" + tablesInfo.Name)
-	for _, v := range tablesInfo.Columns() {
-		fmt.Println("字段名： " + v.Name)
+	isUserExist, errEx := engine.IsTableExist(user)
+	if errEx != nil {
+		fmt.Println(errors.Wrap(errEx, "判断user表IsTableExist出错"))
+		return
+	}
+
+	if isUserExist {
+		tablesInfo := engine.TableInfo(user)
+		fmt.Println("表名：" + tablesInfo.Name)
+		for _, v := range tablesInfo.Columns() {
+			fmt.Println("字段名： " + v.Name)
+		}
+	} else {
+		fmt.Println(errors.New("user表不存在"))
+	}
+}
+
+//
+//  insertData
+//  @Description: 插入数据
+//  @param user
+//  @return bool
+//
+func InsertData(user *User) int64 {
+	if user != nil {
+		engine := InitMySqlXorm(dsn)
+		//默认使用格林尼治时间，需改变xorm的时区，否则差8小时
+		engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+		insertRowSum, err := engine.Insert(user) //如果只插入一个对象也可使用InsertOne
+		if err != nil {
+			fmt.Println(errors.Wrap(err, "插入数据库表user失败"))
+			return 0
+		}
+		if insertRowSum > 0 {
+			return insertRowSum
+		} else {
+			return 0
+		}
+	} else {
+		return 0
+	}
+
+}
+
+//
+//  InsertDatas
+//  @Description: 插入多条记录
+//  @param users
+//  @return int64
+//
+func InsertDatas(users []*User) int64 {
+	if len(users) > 0 {
+		engine := InitMySqlXorm(dsn)
+		//默认使用格林尼治时间，需改变xorm的时区，否则差8小时
+		engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+		insertRowSum, err := engine.Insert(users) //插入多条数据直接传入这个结构体的切片
+		if err != nil {
+			fmt.Println(errors.Wrap(err, "插入数据库表user失败"))
+			return 0
+		}
+		if insertRowSum > 0 {
+			return insertRowSum
+		} else {
+			return 0
+		}
+	} else {
+		return 0
+	}
+	return 0
+}
+
+//
+//  DoQuery
+//  @Description: 查询练习
+//
+func DoQuery() {
+	engine := InitMySqlXorm(dsn)
+	//默认使用格林尼治时间，需改变xorm的时区，否则差8小时
+	engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+
+	var user = new(User)
+	//给表定义一个别名
+	res, err := engine.Alias("u").Where("u.name = ?", "张曼玉").Get(user)
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "别名查询练习时出错"))
+	}
+	if res {
+		fmt.Println(user)
+	}
+
+	//使用and并排序
+	var user2 = new(User)
+	res2, err2 := engine.Alias("u").Where("u.name = ?", "刘得滑").And("u.age = ?", "59").
+		Desc("submit_time").Get(user2)
+	if err2 != nil {
+		fmt.Println(errors.Wrap(err2, "And查询练习时出错"))
+	}
+	if res2 {
+		fmt.Println(user2)
 	}
 
 }
