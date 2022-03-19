@@ -207,7 +207,7 @@ func InsertBookAndGetId(book *dao.Book) int {
 
 //
 //  DoQuery
-//  @Description: 查询练习
+//  @Description: 基本查询练习
 //
 func DoQuery() {
 	engine := InitMySqlXorm(dsn)
@@ -224,10 +224,10 @@ func DoQuery() {
 		fmt.Println(user)
 	}
 
-	//使用and并排序
+	//使用and并排序，排序可以多个条件，越靠前优先级越高
 	var user2 = new(dao.User)
 	res2, err2 := engine.Alias("u").Where("u.name = ?", "刘得滑").And("u.age = ?", "59").
-		Desc("submit_time").Get(user2)
+		Desc("submit_time").Desc("id").Get(user2)
 	if err2 != nil {
 		fmt.Println(errors.Wrap(err2, "And查询练习时出错"))
 	}
@@ -244,5 +244,29 @@ func DoQuery() {
 	if resBool {
 		fmt.Println(book)
 	}
+
+}
+
+//
+//  DoQueryBySql
+//  @Description: sql语句直接通过xorm访问数据库
+//  @param sql
+//
+func DoQueryBySql(sql string, id, startPage, pageSize int) {
+	engine := InitMySqlXorm(dsn)
+	var beans = make([]*dao.Book, 0)
+	err := engine.SQL(sql, id, startPage, pageSize).Find(&beans)
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "Sql批量查书"))
+	} else {
+		fmt.Println(beans)
+	}
+}
+
+//
+//  DoWhereQuery
+//  @Description: where条件查询
+//
+func DoWhereQuery() {
 
 }

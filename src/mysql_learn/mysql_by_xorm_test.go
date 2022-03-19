@@ -103,3 +103,9 @@ func TestInsertBookAndGetId(t *testing.T) {
 func TestDoQuery(t *testing.T) {
 	DoQuery()
 }
+
+//测试sql语句批量查询
+func TestDoQueryBySql(t *testing.T) {
+	sqlStr := "SELECT id, book_name, book.desc,pic,category,create_time,update_time FROM `book` where id > ? order by update_time desc LIMIT ?, ?"
+	DoQueryBySql(sqlStr, 1, 0, 20)
+}
