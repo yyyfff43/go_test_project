@@ -9,7 +9,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/go-xorm/builder v0.0.0-20180826070321-377feedb49e3 // indirect
+	github.com/go-xorm/builder v0.0.0-20180826070321-377feedb49e3
 	github.com/go-xorm/core v0.6.1-0.20181008132326-6bc9412b1c4d
 	github.com/go-xorm/sqlfiddle v0.0.0-20180821085327-62ce714f951a // indirect
 	github.com/go-xorm/xorm v0.0.0-20180925133144-7a9249de3324

@@ -12,6 +12,7 @@ package mysql_learn
 import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-xorm/builder"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
 	"github.com/pkg/errors"
@@ -268,5 +269,23 @@ func DoQueryBySql(sql string, id, startPage, pageSize int) {
 //  @Description: where条件查询
 //
 func DoWhereQuery() {
+	engine := InitMySqlXorm(dsn)
+	var beans = make([]*dao.Book, 0)
+	err := engine.Where("book_name = ? AND category = ?", "鲁菜大全", 0).Find(&beans)
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "Sql,Where条件批量查书"))
+	} else {
+		fmt.Println(beans)
+	}
 
+	var beanS2 = make([]*dao.Book, 0)
+	where := builder.Eq{"book_name": "图解Http", "category": 1}
+	whereGte := builder.Gte{"update_time": "1647654000"}
+	//多个where条件组合，使用链式访问
+	err2 := engine.Where(where).Where(whereGte).Limit(0, 100).Find(&beanS2)
+	if err2 != nil {
+		fmt.Println(errors.Wrap(err, "Sql,Where使用builder构建条件批量查书"))
+	} else {
+		fmt.Println(beans)
+	}
 }

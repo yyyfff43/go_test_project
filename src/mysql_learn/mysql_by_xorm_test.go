@@ -109,3 +109,7 @@ func TestDoQueryBySql(t *testing.T) {
 	sqlStr := "SELECT id, book_name, book.desc,pic,category,create_time,update_time FROM `book` where id > ? order by update_time desc LIMIT ?, ?"
 	DoQueryBySql(sqlStr, 1, 0, 20)
 }
+
+func TestDoWhereQuery(t *testing.T) {
+	DoWhereQuery()
+}
