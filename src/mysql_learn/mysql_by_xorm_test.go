@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"go_test_project/src/dao"
 	"testing"
 	"time"
 )
@@ -48,9 +49,9 @@ func TestInsertData(t *testing.T) {
 	// 按照指定时区和指定格式解析字符串时间
 	timeObj, _ := time.ParseInLocation("2006/01/02 15:04:05", "2022/01/05 11:25:20", loc)
 
-	var user = &User{
-		Name:       "刘得滑",
-		Age:        60,
+	var user = &dao.User{
+		Name:       "谭勇林",
+		Age:        58,
 		Gender:     1,
 		SubmitTime: timeObj.Format("2006/01/02 15:04:05"),
 	}
@@ -64,16 +65,16 @@ func TestInsertDatas(t *testing.T) {
 	now := time.Now()
 	// 格式化的模板为 2006-01-02 15:04:05
 
-	var users = make([]*User, 0, 3)
+	var users = make([]*dao.User, 0, 3)
 
-	var user = &User{
+	var user = &dao.User{
 		Name:       "王圆",
 		Age:        20,
 		Gender:     1,
 		SubmitTime: now.Format("2006/01/02 15:04:05"),
 	}
 
-	var user2 = &User{
+	var user2 = &dao.User{
 		Name:       "赵今麦",
 		Age:        19,
 		Gender:     1,
@@ -87,6 +88,18 @@ func TestInsertDatas(t *testing.T) {
 	fmt.Println(res)
 }
 
+//测试插入书籍并返回新的id
+func TestInsertBookAndGetId(t *testing.T) {
+	var book = &dao.Book{
+		BookName: "鲁菜大全",
+		Desc:     "山东菜的由来",
+		Pic:      "https://bkimg.cdn.bcebos.com/pic/cc11728b4710b912ea015e75cafdfc039345227c?x-bce-process=image/resize,m_lfit,w_440,limit_1/format,f_auto",
+	}
+	res := InsertBookAndGetId(book)
+	fmt.Println(res)
+}
+
+//测试查询
 func TestDoQuery(t *testing.T) {
 	DoQuery()
 }

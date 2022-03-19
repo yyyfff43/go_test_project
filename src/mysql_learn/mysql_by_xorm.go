@@ -15,6 +15,7 @@ import (
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
 	"github.com/pkg/errors"
+	"go_test_project/src/dao"
 	"time"
 )
 
@@ -75,9 +76,9 @@ func InitMySqlXorm(dsn string) *xorm.Engine {
 //  @return *User
 //  @return error
 //
-func SimpleGet() (*User, error) {
+func SimpleGet() (*dao.User, error) {
 	engine := InitMySqlXorm(dsn)
-	user := new(User)
+	user := new(dao.User)
 	has, err := engine.Where("name=?", "张曼玉").Get(user) //方法体如果传参是结构体对象则必须是指针类型
 	if err != nil {
 		panic(err.Error())
@@ -109,7 +110,7 @@ func ShowDbInfo() {
 
 	//根据传入的结构体指针及其对应的Tag，提取出模型对应的表结构信息。这里不是数据库当前的表结构信息，
 	//而是我们通过struct建模时希望数据库的表的结构信息
-	var user = new(User) //此处可以直接使用传统mysql定义的结构体，因为数据库声明tag一致
+	var user = new(dao.User) //此处可以直接使用传统mysql定义的结构体，因为数据库声明tag一致
 	isUserExist, errEx := engine.IsTableExist(user)
 	if errEx != nil {
 		fmt.Println(errors.Wrap(errEx, "判断user表IsTableExist出错"))
@@ -133,7 +134,7 @@ func ShowDbInfo() {
 //  @param user
 //  @return bool
 //
-func InsertData(user *User) int64 {
+func InsertData(user *dao.User) int64 {
 	if user != nil {
 		engine := InitMySqlXorm(dsn)
 		//默认使用格林尼治时间，需改变xorm的时区，否则差8小时
@@ -160,7 +161,7 @@ func InsertData(user *User) int64 {
 //  @param users
 //  @return int64
 //
-func InsertDatas(users []*User) int64 {
+func InsertDatas(users []*dao.User) int64 {
 	if len(users) > 0 {
 		engine := InitMySqlXorm(dsn)
 		//默认使用格林尼治时间，需改变xorm的时区，否则差8小时
@@ -182,6 +183,29 @@ func InsertDatas(users []*User) int64 {
 }
 
 //
+//  InsertBookAndGetId
+//  @Description: 插入一本新书并获取这个书的last_insert_id
+//  @param book
+//  @return int64
+//
+func InsertBookAndGetId(book *dao.Book) int {
+	if book != nil {
+		engine := InitMySqlXorm(dsn)
+		insertRowSum, err := engine.Insert(book) //插入多条数据直接传入这个结构体的切片
+		if err != nil {
+			fmt.Println(errors.Wrap(err, "插入数据库表book失败"))
+			return 0
+		}
+		if insertRowSum > 0 {
+			return book.Id
+		} else {
+			return 0
+		}
+	}
+	return 0
+}
+
+//
 //  DoQuery
 //  @Description: 查询练习
 //
@@ -190,7 +214,7 @@ func DoQuery() {
 	//默认使用格林尼治时间，需改变xorm的时区，否则差8小时
 	engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
 
-	var user = new(User)
+	var user = new(dao.User)
 	//给表定义一个别名
 	res, err := engine.Alias("u").Where("u.name = ?", "张曼玉").Get(user)
 	if err != nil {
@@ -201,7 +225,7 @@ func DoQuery() {
 	}
 
 	//使用and并排序
-	var user2 = new(User)
+	var user2 = new(dao.User)
 	res2, err2 := engine.Alias("u").Where("u.name = ?", "刘得滑").And("u.age = ?", "59").
 		Desc("submit_time").Get(user2)
 	if err2 != nil {
@@ -209,6 +233,16 @@ func DoQuery() {
 	}
 	if res2 {
 		fmt.Println(user2)
+	}
+
+	//按主键查询一条数据
+	var book = new(dao.Book)
+	resBool, err3 := engine.ID(1).Get(book)
+	if err2 != nil {
+		fmt.Println(errors.Wrap(err3, "按id查出一本书"))
+	}
+	if resBool {
+		fmt.Println(book)
 	}
 
 }

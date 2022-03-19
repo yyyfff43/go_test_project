@@ -11,21 +11,13 @@ package mysql_learn
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"go_test_project/src/dao"
 	"time"
 
 	"fmt"
 )
 
 var dsn string = "root:123456@tcp(127.0.0.1:3306)/simple_test?charset=utf8mb4&parseTime=True"
-
-//注意此处的标签tag中虽然是db开头，但是后边声明的值如果和数据库相同，xorm也是可以读取的，不必把db：换为xorm:
-type User struct {
-	Id         int    `db:"id"`
-	Age        int    `db:"age"`
-	Name       string `db:"name"`
-	Gender     int    `db:"gender"`
-	SubmitTime string `db:"submitTime"`
-}
 
 //
 //  initDb
@@ -70,7 +62,7 @@ func QueryRowDemo() {
 	db, _ := initDb(dsn)
 	defer db.Close() //数据库必须要释放连接
 	sqlStr := "select id, name, age from user where id=?"
-	var u User
+	var u dao.User
 	// 非常重要：确保QueryRow之后调用Scan方法，否则持有的数据库链接不会被释放
 	err := db.QueryRow(sqlStr, 1).Scan(&u.Id, &u.Name, &u.Age)
 	if err != nil {
@@ -99,7 +91,7 @@ func QueryMultiRowDemo() {
 
 	// 循环读取结果集中的数据
 	for rows.Next() {
-		var u User
+		var u dao.User
 		err := rows.Scan(&u.Id, &u.Name, &u.Age)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
@@ -197,7 +189,7 @@ func PrepareQueryDemo() {
 	defer rows.Close()
 	// 循环读取结果集中的数据
 	for rows.Next() {
-		var u User
+		var u dao.User
 		err := rows.Scan(&u.Id, &u.Name, &u.Age)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
