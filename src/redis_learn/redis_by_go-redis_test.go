@@ -18,3 +18,7 @@ func TestV8Example(t *testing.T) {
 func TestStringOperation(t *testing.T) {
 	StringOperation()
 }
+
+func TestListOperation(t *testing.T) {
+	ListOperation()
+}
