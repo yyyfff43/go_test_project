@@ -19,6 +19,17 @@ func TestStringOperation(t *testing.T) {
 	StringOperation()
 }
 
+//测试列表
 func TestListOperation(t *testing.T) {
 	ListOperation()
+}
+
+//测试去重集合
+func TestSetOperation(t *testing.T) {
+	SetOperation()
+}
+
+//测试hash
+func TestHashOperation(t *testing.T) {
+	HashOperation()
 }

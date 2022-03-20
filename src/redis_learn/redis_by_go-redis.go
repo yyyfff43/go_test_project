@@ -75,7 +75,6 @@ func V8Example() {
 //
 //  stringOperation
 //  @Description: String 操作
-//  @param client
 //
 func StringOperation() {
 
@@ -118,7 +117,6 @@ func StringOperation() {
 //
 //  ListOperation
 //  @Description: List操作
-//  @param client
 //
 func ListOperation() {
 	ctx := context.Background()
@@ -158,4 +156,91 @@ func ListOperation() {
 		fmt.Println(resstr)
 	}
 
+}
+
+//
+//  SetOperation
+//  @Description: set 操作去重集合
+//
+func SetOperation() {
+	ctx := context.Background()
+	if err := initClient(); err != nil {
+		fmt.Println(errors.Wrap(err, "redis初始化"))
+		return
+	}
+
+	rdb.SAdd(ctx, "blacklist", "Obama")     // 向 blacklist 中添加元素
+	rdb.SAdd(ctx, "blacklist", "Hillary")   // 再次添加
+	rdb.SAdd(ctx, "blacklist", "the Elder") // 添加新元素
+
+	rdb.SAdd(ctx, "whitelist", "the Elder") // 向 whitelist 添加元素
+
+	// 判断元素是否在集合中
+	isMember, err := rdb.SIsMember(ctx, "blacklist", "Bush").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Is Bush in blacklist: ", isMember)
+
+	// 求交集, 即既在黑名单中, 又在白名单中的元素
+	names, err := rdb.SInter(ctx, "blacklist", "whitelist").Result()
+	if err != nil {
+		panic(err)
+	}
+	// 获取到的元素是 "the Elder"
+	fmt.Println("Inter result: ", names)
+
+	// 获取指定集合的所有元素
+	all, err := rdb.SMembers(ctx, "blacklist").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("All member: ", all)
+	//设置过期时间
+	rdb.Expire(ctx, "blacklist", 600*time.Second)
+	rdb.Expire(ctx, "whitelist", 600*time.Second)
+}
+
+//
+//  hashOperation
+//  @Description:  hash 操作
+//
+func HashOperation() {
+	ctx := context.Background()
+	if err := initClient(); err != nil {
+		fmt.Println(errors.Wrap(err, "redis初始化"))
+		return
+	}
+
+	rdb.HSet(ctx, "user_xys", "name", "xys") // 向名称为 user_xys 的 hash 中添加元素 name
+	rdb.HSet(ctx, "user_xys", "age", "18")   // 向名称为 user_xys 的 hash 中添加元素 age
+
+	// 批量地向名称为 user_test 的 hash 中添加元素 name 和 age
+	rdb.HMSet(ctx, "user_test", map[string]string{"name": "test", "age": "20"})
+	// 批量获取名为 user_test 的 hash 中的指定字段的值.
+	fields, err := rdb.HMGet(ctx, "user_test", "name", "age").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("fields in user_test: ", fields)
+
+	// 获取名为 user_xys 的 hash 中的字段个数
+	length, err := rdb.HLen(ctx, "user_xys").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("field count in user_xys: ", length) // 字段个数为2
+
+	// 删除名为 user_test 的 age 字段
+	rdb.HDel(ctx, "user_test", "age")
+	age, err := rdb.HGet(ctx, "user_test", "age").Result()
+	if err != nil {
+		fmt.Printf("Get user_test age error: %v\n", err)
+	} else {
+		fmt.Println("user_test age is: ", age)
+	}
+
+	//设置过期时间
+	rdb.Expire(ctx, "user_xys", 600*time.Second)
+	rdb.Expire(ctx, "user_test", 600*time.Second)
 }
