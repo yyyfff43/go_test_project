@@ -271,6 +271,8 @@ func DoQueryBySql(sql string, id, startPage, pageSize int) {
 func DoWhereQuery() {
 	engine := InitMySqlXorm(dsn)
 	var beans = make([]*dao.Book, 0)
+
+	//直接写sql
 	err := engine.Where("book_name = ? AND category = ?", "鲁菜大全", 0).Find(&beans)
 	if err != nil {
 		fmt.Println(errors.Wrap(err, "Sql,Where条件批量查书"))
@@ -278,14 +280,48 @@ func DoWhereQuery() {
 		fmt.Println(beans)
 	}
 
+	//使用builder
 	var beanS2 = make([]*dao.Book, 0)
 	where := builder.Eq{"book_name": "图解Http", "category": 1}
 	whereGte := builder.Gte{"update_time": "1647654000"}
 	//多个where条件组合，使用链式访问
-	err2 := engine.Where(where).Where(whereGte).Limit(0, 100).Find(&beanS2)
+	err2 := engine.Where(where).Where(whereGte).Limit(100, 0).Find(&beanS2)
 	if err2 != nil {
 		fmt.Println(errors.Wrap(err, "Sql,Where使用builder构建条件批量查书"))
 	} else {
 		fmt.Println(beans)
 	}
+
+	//只取想要的字段，使用.Cols(),get,update等语句同样适用
+	var beanS3 = make([]*dao.Book, 0)
+	where2 := builder.Eq{"book_name": "图解Http", "category": 1}
+	whereGte2 := builder.Gte{"update_time": "1647654000"}
+	//多个where条件组合，使用链式访问，注意此处有个字段名称desc同时也是mysql的关键字，如果前边不加表别名，会sql语句报错
+	err3 := engine.Alias("b").Cols("book_name", "b.desc").Where(where2).Where(whereGte2).Limit(100, 0).Find(&beanS3)
+	if err3 != nil {
+		fmt.Println(errors.Wrap(err3, "Sql,Where使用Cols构建条件批量查书"))
+	} else {
+		fmt.Println(beanS3)
+	}
+
+}
+
+//
+//  DoUpdateQuery
+//  @Description: 更新查询操作
+//
+func DoUpdateQuery(id, category int) {
+	engine := InitMySqlXorm(dsn)
+	var book = new(dao.Book)
+	//更新指定的字段
+	book.Category = category
+	affected, err := engine.Id(id).Cols("category").Update(book) //注意结构体如果是指针类型就不要再加&符号，不然会报Params type error
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "update书籍记录"))
+	}
+	if affected > 0 {
+		fmt.Println(affected)
+	}
+
+	//engine.Table("book") //使用.Table来指定表明访问
 }

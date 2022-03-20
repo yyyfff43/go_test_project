@@ -110,6 +110,11 @@ func TestDoQueryBySql(t *testing.T) {
 	DoQueryBySql(sqlStr, 1, 0, 20)
 }
 
+//测试where条件查询
 func TestDoWhereQuery(t *testing.T) {
 	DoWhereQuery()
+}
+
+func TestDoUpdateQuery(t *testing.T) {
+	DoUpdateQuery(3, 2)
 }

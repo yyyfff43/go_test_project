@@ -25,11 +25,12 @@ func TestInsertRowDemo(t *testing.T) {
 	InsertRowDemo()
 }
 
-//测试删除数据
+//测试更新数据
 func TestUpdateRowDemo(t *testing.T) {
 	UpdateRowDemo()
 }
 
+//测试删除数据
 func TestDeleteRowDemo(t *testing.T) {
 	DeleteRowDemo()
 }
