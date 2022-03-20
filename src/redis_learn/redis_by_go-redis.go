@@ -12,6 +12,7 @@ package redis_learn
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/go-redis/redis/v8" // 注意导入的是新版本
@@ -37,14 +38,16 @@ func initClient() (err error) {
 	return err
 }
 
+//初始化小测试
 func V8Example() {
 	ctx := context.Background()
 	if err := initClient(); err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(errors.Wrap(err, "redis初始化"))
 		return
 	}
+	defer rdb.Close()
 
-	err := rdb.Set(ctx, "key1", "value1", 300).Err()
+	err := rdb.Set(ctx, "key1", "value1", 600*time.Second).Err()
 	if err != nil {
 		panic(err)
 	}
@@ -63,6 +66,34 @@ func V8Example() {
 	} else {
 		fmt.Println("key2", val2)
 	}
+
 	// Output: key value
 	// key2 does not exist
+}
+
+//
+//  stringOperation
+//  @Description: String 操作
+//  @param client
+//
+func StringOperation() {
+
+	ctx := context.Background()
+	if err := initClient(); err != nil {
+		fmt.Println(errors.Wrap(err, "redis初始化"))
+		return
+	}
+
+	// 第三个参数是过期时间, 如果是 0, 则表示没有过期时间.
+	err := rdb.SetEX(ctx, "markName", "xys", 600*time.Second).Err()
+	if err != nil {
+		panic(err)
+	}
+
+	val, err := rdb.Get(ctx, "markName").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("markName", val)
+
 }
