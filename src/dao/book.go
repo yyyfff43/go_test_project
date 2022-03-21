@@ -19,3 +19,8 @@ type Book struct {
 	CreateTime int64  `xorm:"create_time created"` //创建时间，如果不指定则自己按当前时间创建，Unix时间戳格式
 	//Version string `xorm:"version"` //乐观锁
 }
+
+//TODO 如果结构体名称不识别，会读取这个成员方法中的表名？公司项目中倒是确实如此
+func (b *Book) TableName() string {
+	return "book"
+}

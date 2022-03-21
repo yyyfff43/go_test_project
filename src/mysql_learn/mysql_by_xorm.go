@@ -271,7 +271,7 @@ func DoQueryBySql(sql string, id, startPage, pageSize int) {
 func DoWhereQuery() {
 	engine := InitMySqlXorm(dsn)
 	var beans = make([]*dao.Book, 0)
-
+	dbBeansTime := time.Now()
 	//直接写sql
 	err := engine.Where("book_name = ? AND category = ?", "鲁菜大全", 0).Find(&beans)
 	if err != nil {
@@ -279,6 +279,8 @@ func DoWhereQuery() {
 	} else {
 		fmt.Println(beans)
 	}
+	timeBeansCost := time.Since(dbBeansTime)
+	fmt.Printf("beans查询耗时：%v\n", timeBeansCost)
 
 	//使用builder
 	var beanS2 = make([]*dao.Book, 0)
