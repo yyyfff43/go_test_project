@@ -83,7 +83,7 @@ func StringOperation() {
 		fmt.Println(errors.Wrap(err, "redis初始化"))
 		return
 	}
-
+	defer rdb.Close()
 	// 第三个参数是过期时间, 如果是 0, 则表示没有过期时间.
 	err := rdb.SetEX(ctx, "markName", "xys", 600*time.Second).Err()
 	if err != nil {
@@ -124,7 +124,7 @@ func ListOperation() {
 		fmt.Println(errors.Wrap(err, "redis初始化"))
 		return
 	}
-
+	defer rdb.Close()
 	rdb.RPush(ctx, "fruit", "apple")               // 在名称为 fruit 的list尾添加一个值为value的元素
 	rdb.LPush(ctx, "fruit", "banana")              // 在名称为 fruit 的list头添加一个值为value的 元素
 	rdb.LPush(ctx, "fruit", "kiwi")                // 在名称为 fruit 的list头添加一个值为value的 元素
@@ -168,7 +168,7 @@ func SetOperation() {
 		fmt.Println(errors.Wrap(err, "redis初始化"))
 		return
 	}
-
+	defer rdb.Close()
 	rdb.SAdd(ctx, "blacklist", "Obama")     // 向 blacklist 中添加元素
 	rdb.SAdd(ctx, "blacklist", "Hillary")   // 再次添加
 	rdb.SAdd(ctx, "blacklist", "the Elder") // 添加新元素
@@ -211,7 +211,7 @@ func HashOperation() {
 		fmt.Println(errors.Wrap(err, "redis初始化"))
 		return
 	}
-
+	defer rdb.Close()
 	rdb.HSet(ctx, "user_xys", "name", "xys") // 向名称为 user_xys 的 hash 中添加元素 name
 	rdb.HSet(ctx, "user_xys", "age", "18")   // 向名称为 user_xys 的 hash 中添加元素 age
 
@@ -243,4 +243,35 @@ func HashOperation() {
 	//设置过期时间
 	rdb.Expire(ctx, "user_xys", 600*time.Second)
 	rdb.Expire(ctx, "user_test", 600*time.Second)
+}
+
+//
+//  ZSetOperation
+//  @Description: 有序集合操作
+//
+func ZSetOperation() {
+	ctx := context.Background()
+	if err := initClient(); err != nil {
+		fmt.Println(errors.Wrap(err, "redis初始化"))
+		return
+	}
+	defer rdb.Close()
+	zsetKey := "go2zset"
+	ranking := []*redis.Z{
+		&redis.Z{Score: 100.0, Member: "张三"},
+		&redis.Z{Score: 80.0, Member: "李四"},
+		&redis.Z{Score: 70.0, Member: "王五"},
+		&redis.Z{Score: 75.0, Member: "赵六"},
+		&redis.Z{Score: 59.0, Member: "田七"},
+	}
+	rdb.ZAdd(ctx, zsetKey, ranking...)
+	//golang+5分
+	newScore, err := rdb.ZIncrBy(ctx, zsetKey, 5.0, "张三").Result()
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "给张三加分报错"))
+	}
+	fmt.Println("张三加5分后的最新分数", newScore)
+	//取zset里的前2名热度的市民
+	zsetList2, _ := rdb.ZRevRangeWithScores(ctx, zsetKey, 0, 1).Result()
+	fmt.Println("zset前2名热度的市民", zsetList2)
 }

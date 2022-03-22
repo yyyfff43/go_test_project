@@ -33,3 +33,7 @@ func TestSetOperation(t *testing.T) {
 func TestHashOperation(t *testing.T) {
 	HashOperation()
 }
+
+func TestZSetOperation(t *testing.T) {
+	ZSetOperation()
+}
