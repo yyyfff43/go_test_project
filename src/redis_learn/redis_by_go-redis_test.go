@@ -34,6 +34,7 @@ func TestHashOperation(t *testing.T) {
 	HashOperation()
 }
 
+//测试有序去重集合
 func TestZSetOperation(t *testing.T) {
 	ZSetOperation()
 }
